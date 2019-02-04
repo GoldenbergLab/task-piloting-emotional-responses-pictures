@@ -7,7 +7,7 @@
     <script src="jspsych-6.0.5/plugins/jspsych-image-button-response.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-survey-text.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
-    <script src="jspsych-6.0.5/plugins/jspsych-image-slider-response_noButton.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-image-slider-response.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-vsl-grid-scene1.js"></script>
     <script src="piloting_emotions_functions.js"></script>
     <script src="jquery-3.3.1.min.js"></script>
@@ -76,12 +76,11 @@
   var fixation = {
       type: 'html-keyboard-response',
       stimulus: '<p style="font-size: 48px;">+</p>',
-      trial_duration:  getFixationTime,  //transfer ms to s in units
+      trial_duration: getFixationTime,  //transfer ms to s in units
       data: {Name:'fixation'}
   };
 
-
-  var stimuli = {
+  var stimuliNoRating = {
     type: 'image-button-response',
     stimulus: getNextStimuli,
     choices: [],
@@ -89,6 +88,16 @@
     prompt: "",
     data: {Name:'stimuli'}
   };
+
+  var stimuliRating = {
+      type: 'image-slider-response',
+      stimulus: getSameStimuli,
+      labels: ['1.Not happy at all','50. Extremely happy'],
+      prompt: "How happy doe this picture make you feel?",
+    response_ends_trial: false
+  };
+
+
 
 
   /* create experiment definition array */
@@ -99,7 +108,7 @@
      pilot_stimuli.push(instructions)}
 
   var repeat = { //conduct the actual 50 tasks
-      timeline: [fixation,stimuli],
+      timeline: [fixation,stimuliNoRating,stimuliRating],
       repetitions: 3,
       randomize_order: true
     }

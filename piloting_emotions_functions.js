@@ -21,6 +21,11 @@ function getNextStimuli () { //function to get the first stimuli
     return stim;
   }
 
+function getSameStimuli () { //function to get the first stimuli
+      var curr_stim = stiumliShuffled[0];
+      var stim = base_path + curr_stim //add the path the stim
+      return stim;
+    }
 
 function getButtons() {
     var trialButtons = [
