@@ -92,7 +92,7 @@ jsPsych.plugins['image-slider-response'] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    var html = '<div id="jspsych-image-slider-response-wrapper" style="margin: 100px 0px;">';
+    var html = '<div id="jspsych-image-slider-response-wrapper" style="margin: 50px 0px;">';
     html += '<div id="jspsych-image-slider-response-stimulus"><img src="' + trial.stimulus + '"></div>';
     html += '<div class="jspsych-image-slider-response-container" style="position:relative;">';
     html += '<input type="range" value="'+trial.start+'" min="'+trial.min+'" max="'+trial.max+'" step="'+trial.step+'" style="width: 100%;" id="jspsych-image-slider-response-response"></input>';

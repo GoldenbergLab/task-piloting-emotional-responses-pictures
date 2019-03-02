@@ -15,17 +15,38 @@ function getFixationTime (){  //get randomized time of fixation by randomly choo
   return fixationTime;
 }
 
-function getNextStimuli () { //function to get the first stimuli
-    var curr_stim = stiumliShuffled.pop();
-    var stim = base_path + curr_stim //add the path the stim
-    return stim;
-  }
+function getStimuli () { //function to get the first stimuli
+  var curr_stim = stiumliShuffled[0];
+  var stim = base_path + curr_stim //add the path the stim
+  return stim;
+}
 
-function getSameStimuli () { //function to get the first stimuli
-      var curr_stim = stiumliShuffled[0];
-      var stim = base_path + curr_stim //add the path the stim
-      return stim;
-    }
+function trialTrnaision (){
+  stiumliShuffled.shift()
+}
+
+function getWord (){
+  wordList = wordList.shift();
+  return wordList;
+}
+
+function checkTyping(){
+    var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
+    var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
+    if (wordList !== lasttrialdata2){      //test if type correctly
+      falseAnswer += 1;
+      alert("Attention! Please type the word correctly. If the alert shows up for 4 times, the experiment will be automatically terminated.");
+      wordList.unshift();
+
+      if (falseAnswer == 4){
+        alert("Hi! You've made too much errors in typing the word suggesting that you are not paying attention to the task. The task will be Terminated");
+        window.close();
+      }else{return true;}
+
+      return true; }
+    else {falseAnswer = 0;return false}
+}
+
 
 function getButtons() {
     var trialButtons = [

@@ -99,19 +99,9 @@ jsPsych.plugins['image-slider-response_noButton'] = (function() {
   plugin.trial = function(display_element, trial) {
 
     var html =  '<div id="jspsych-image-slider-response_noButton-wrapper" style="margin: 100px 0px;">';   //Change: add img stimulus - assign elements of array getScale function in task file to images//
-        html += '<div id="jspsych-image-slider-response_noButton-stimulus"><img src="'+trial.stimulus[1]+
-
-    '"height="80px" width="58px"><img src="'+trial.stimulus[1]+ '"height="80px" width="58px"><img src="'+trial.stimulus[2]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[3]+ '"height="80px" width="58px"><img src="'+trial.stimulus[4]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[5]+ '"height="80px" width="58px"><img src="'+trial.stimulus[6]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[7]+ '"height="80px" width="58px"><img src="'+trial.stimulus[8]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[11]+'"height="80px" width="58px"><img src="'+trial.stimulus[12]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[13]+'"height="80px" width="58px"><img src="'+trial.stimulus[14]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[15]+'"height="80px" width="58px"><img src="'+trial.stimulus[16]+
-    '"height="80px" width="58px"><img src="'+trial.stimulus[17]+'"height="80px" width="58px"></div>';
-
-    html += '<div class="jspsych-image-slider-response_noButton-container" style="position:relative;">';
-    html += '<input type="range" value="'+trial.start+'" min="'+trial.min+'" max="'+trial.max+'" step="'+trial.step+'" style="width: 100%;" id="jspsych-image-slider-response_noButton-response_noButton"></input>';
+    html += '<div id="jspsych-image-slider-response-stimulus"><img src="' + trial.stimulus + '"></div>';
+    html += '<div class="jspsych-image-slider-response-container" style="position:relative;">';
+    html += '<input type="range" value="'+trial.start+'" min="'+trial.min+'" max="'+trial.max+'" step="'+trial.step+'" style="width: 100%;" id="jspsych-image-slider-response-response"></input>';
     html += '<div>'
     for(var j=0; j < trial.labels.length; j++){
       var width = 100/(trial.labels.length-1);
@@ -120,10 +110,10 @@ jsPsych.plugins['image-slider-response_noButton'] = (function() {
       html += '<span style="text-align: center; font-size: 80%;">'+trial.labels[j]+'</span>';
       html += '</div>'
     }
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
 
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
 
     if (trial.prompt !== null){
       html += trial.prompt;

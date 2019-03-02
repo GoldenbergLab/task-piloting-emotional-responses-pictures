@@ -7,6 +7,7 @@
     <script src="jspsych-6.0.5/plugins/jspsych-image-button-response.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-survey-text.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.0.5/plugins/jspsych-image-slider-response_noButton.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-image-slider-response.js"></script>
     <script src="jspsych-6.0.5/plugins/jspsych-vsl-grid-scene1.js"></script>
     <script src="piloting_emotions_functions.js"></script>
@@ -16,6 +17,10 @@
   <body bgcolor="#AAAAAA"></body>
   <script>
 
+
+  //things to do
+  // 1. change resolution of pictures
+  // 2/
 
   /* ************************************ */
   /* Define experimental variables / upload data */
@@ -30,6 +35,7 @@
 
 
   var stiumliShuffled = jsPsych.randomization.shuffle(stimuliUnshuffled); //shuffle stims for actual task
+  var wordList = ['But','rock','sky','our','Course','we','table','house','here','mouth','tree'];
 
 
 
@@ -72,6 +78,16 @@
           else{ return false;} },
       };
 
+  var ask_Typing = {
+    type: 'survey-text',
+    questions: function (){return [{prompt:'Please type the word: '+ getWord().bold() + '  (pay attention to capital letters)'}]},
+  };
+
+  var attentionCheck = {
+      timeline: [ask_Typing],
+      loop_function: checkTyping,
+  };
+
 
   var fixation = {
       type: 'html-keyboard-response',
@@ -82,19 +98,37 @@
 
   var stimuliNoRating = {
     type: 'image-button-response',
-    stimulus: getNextStimuli,
+    stimulus: getStimuli,
     choices: [],
-    trial_duration : 5000,
+    trial_duration : 1000,
     prompt: "",
     data: {Name:'stimuli'}
   };
 
   var stimuliRating = {
-      type: 'image-slider-response',
-      stimulus: getSameStimuli,
-      labels: ['1.Not happy at all','50. Extremely happy'],
-      prompt: "How happy doe this picture make you feel?",
-    response_ends_trial: false
+    type: 'image-slider-response',
+    stimulus: getStimuli,
+    labels: ['1.Not happy at all','50. Extremely happy'],
+    prompt: "<p>How strong is your emotion in response to the picture</p>",
+    step:1,
+    min:0,
+    max:100,
+    start:0
+  };
+
+  var valence = {
+    type: 'image-button-response',
+    stimulus: getStimuli,
+    choices: ["positive", "negative", "neutral"],
+    prompt: "<p>Do you feel positive, negative or neutral emotions in response to the picture</p>"
+  };
+
+  var emotionType = {
+    type: 'image-button-response',
+    stimulus: getStimuli,
+    choices: ["Happiness", "Excitment", "Calmness", "Sadness","Anger","Guilt", "Fear","Hatred"],
+    prompt: "<p>What type of emotion this picture makes you feel?</p>",
+    on_finish:trialTrnaision
   };
 
 
@@ -103,16 +137,32 @@
   /* create experiment definition array */
 
   var pilot_stimuli = []; //display instructions
-  pilot_stimuli.push(participant_id)
-  for (var i = 0; i < slideList.length-2; i++) {
-     pilot_stimuli.push(instructions)}
+  //pilot_stimuli.push(participant_id)
+  //for (var i = 0; i < slideList.length-2; i++) {
+  //   pilot_stimuli.push(instructions)}
 
-  var repeat = { //conduct the actual 50 tasks
-      timeline: [fixation,stimuliNoRating,stimuliRating],
-      repetitions: 3,
-      randomize_order: true
-    }
-  pilot_stimuli.push(repeat);
+   var taskNumber = 50; //must be a mutiple of 5. The real trial number will have one extra due to attention check trial
+
+   for (var i = 0; i < taskNumber/5; i++) {
+     pilot_stimuli.push(
+       attentionCheck,
+       fixation,
+       stimuliNoRating,
+       stimuliRating,
+       valence,
+       emotionType)
+     var k = 0; var x = 9;
+     while (k < x){ //it will show typing attention check every (x+1) trial
+     pilot_stimuli.push(
+       fixation,
+       stimuliNoRating,
+       stimuliRating,
+       valence,
+       emotionType);
+     k ++;}
+   };
+
+
 
   /* start the experiment */
   jsPsych.init({
