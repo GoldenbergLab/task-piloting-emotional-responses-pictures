@@ -35,7 +35,7 @@ function checkResponse(data){ //check repeated response
 // after one practice trial and two trials, we begin to test whether choice is the same as previous two
   var lastRating = jsPsych.data.get().last(1).filter({trial_type:'image-slider-response'}).values()[0].response
   if (lastRating=="0"){
-    alert('It seems that you are not rating the picture.Please make sure to rate the picture before your proceed');
+    alert('It seems that you have not rated the picture and just pressed continue.Please make sure to rate the picture.');
   } else {
   }
 }
