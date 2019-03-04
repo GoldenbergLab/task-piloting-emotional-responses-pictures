@@ -36,6 +36,7 @@
 
   var stiumliShuffled = jsPsych.randomization.shuffle(stimuliUnshuffled); //shuffle stims for actual task
   var wordList = ['but','rock','sky','our','course','we','table','house','here','mouth','tree'];
+  var alertNumber = 0;
 
 
 
@@ -153,7 +154,7 @@
        valence,
        stimuliRating,
        emotionType)
-     var k = 0; var x = 5;
+     var k = 0; var x = 4;
      while (k < x){ //it will show typing attention check every (x+1) trial
      pilot_stimuli.push(
        fixation,

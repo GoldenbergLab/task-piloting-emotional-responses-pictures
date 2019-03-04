@@ -34,19 +34,21 @@ function checkResponse(data){ //check repeated response
 // after one practice trial and two trials, we begin to test whether choice is the same as previous two
   var lastRating = jsPsych.data.get().last(1).filter({trial_type:'image-slider-response'}).values()[0].response
   if (lastRating=="0"){
-    alert('It seems that you have not rated the picture and just pressed continue.Please make sure to rate the picture.');
-  } else {
+    alertNumber += 1;
+    alert('It seems that you have not rated the picture and just pressed continue.Please make sure to rate the picture. Getting 4 of alerts during this session will lead to a termination of the study.');
+    if (alertNumber == 4){
+      alert("Hi! You've made too much errors in typing the word suggesting that you are not paying attention to the task. The task will be Terminated");
+      window.close();
+  } else {}
   }
 }
-
 function checkTyping() {
-  var falseAnswer=0
   var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
   var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
   if (wordList[0] != lasttrialdata2){      //test if type correctly
-    falseAnswer += 1;
-    alert("Attention! Please type the word correctly. If the alert shows up for 4 times, the experiment will be automatically terminated.");
-    if (falseAnswer == 4){
+    alertNumber += 1;
+    alert("Attention! Please type the word correctly. If this alert (or any other) shows up for 4 times, the experiment will be automatically terminated.");
+    if (alertNumber == 4){
       alert("Hi! You've made too much errors in typing the word suggesting that you are not paying attention to the task. The task will be Terminated");
       window.close();
     }else{
