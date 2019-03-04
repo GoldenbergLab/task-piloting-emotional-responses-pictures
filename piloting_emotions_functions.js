@@ -30,19 +30,27 @@ function getWord (){
   return wordList;
 }
 
-function checkTyping(){
+
+function checkResponse(data){ //check repeated response
+// after one practice trial and two trials, we begin to test whether choice is the same as previous two
+  var lastRating = jsPsych.data.get().last(1).filter({trial_type:'image-slider-response'}).values()[0].response
+  if (lastRating=="0"){
+    alert('It seems that you are not rating the picture.Please make sure to rate the picture before your proceed');
+  } else {
+  }
+}
+
+function checkTyping() {
     var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
     var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
     if (wordList !== lasttrialdata2){      //test if type correctly
       falseAnswer += 1;
       alert("Attention! Please type the word correctly. If the alert shows up for 4 times, the experiment will be automatically terminated.");
       wordList.unshift();
-
       if (falseAnswer == 4){
         alert("Hi! You've made too much errors in typing the word suggesting that you are not paying attention to the task. The task will be Terminated");
         window.close();
       }else{return true;}
-
       return true; }
     else {falseAnswer = 0;return false}
 }
