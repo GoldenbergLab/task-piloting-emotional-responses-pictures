@@ -116,7 +116,7 @@
   var stimuliRating = {
     type: 'image-slider-response',
     stimulus: getStimuli,
-    labels: ['1.Not strong at all','10','50','100. Very Strong'],
+    labels: ['1.Not Strong at All','10','50','100. Very Strong'],
     prompt: "<p>How strong is your emotion in response to the picture</p>",
     step:1,
     min:0,
@@ -134,7 +134,11 @@
     on_finish:trialTrnaision
   };
 
-
+  var connectSurvey = {
+      type: 'image-button-response',
+      stimulus: getNextSlide,
+      choices: ['Begin Survey']
+  };
 
 
   /* create experiment definition array */
@@ -165,7 +169,7 @@
      k ++;}
    };
 
-
+  pilot_stimuli.push(connectSurvey)
 
   /* start the experiment */
   jsPsych.init({
@@ -175,10 +179,10 @@
     var final_submit = function() {
              jsPsych.turk.submitToTurk({"completion_time": (new Date().getTime())});
           };
-      saveData("2019_pilot_positive_emotions/" + participantID+ ".json",
-      jsPsych.data.get().json(), final_submit, final_submit);
-    jsPsych.data.get().localSave('csv',participantID+'.csv'); //save as csv file with id as file name
-    window.location = "https://stanforduniversity.qualtrics.com/jfe/form/SV_cBULlVQd3dVp3q5"
+    saveData("2019_pilot_positive_emotions/" + participantID+ ".json",
+    jsPsych.data.get().json(), final_submit, final_submit);
+    //jsPsych.data.get().localSave('csv',participantID+'.csv'); //save as csv file with id as file name
+    window.location = "https://stanforduniversity.qualtrics.com/jfe/form/SV_0fiIg8VMGhrYDkx"
     }
 
   })

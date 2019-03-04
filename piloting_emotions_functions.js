@@ -42,6 +42,7 @@ function checkResponse(data){ //check repeated response
   } else {}
   }
 }
+
 function checkTyping() {
   var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
   var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
