@@ -103,7 +103,6 @@
     trial_duration : 1000,
     prompt: "",
     data: {Name:'stimuli'},
-    on_finish:checkResponse
   };
 
   var valence = {
@@ -121,7 +120,8 @@
     step:1,
     min:0,
     max:100,
-    start:0
+    start:0,
+    on_finish:checkResponse
   };
 
 
