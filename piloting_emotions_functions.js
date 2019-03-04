@@ -30,6 +30,21 @@ function getWord (){
   return wordList;
 }
 
+
+function checkResponse(data){ //check repeated response
+  var lastRatings = jsPsych.data.get().last(10).filter({trial_type:'image-slider-response_noButton'}).values();
+  var currentRating = Number(lastRatings[0].response);
+  var last1Rating = Number(lastRatings[1].response);
+  var last2Rating = Number(lastRatings[2].response);
+    if ((currentRating == last1Rating) && (currentRating == last2Rating)){
+      alert('It seems that you were making the exact same rating as the one in the previous trial. Please make sure to change the scale to reflect your estimate of the mean group emotion.');
+      return false;
+    } else {
+      return true;
+    }
+  }else {return true;}}
+}
+
 function checkTyping(){
     var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
     var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
