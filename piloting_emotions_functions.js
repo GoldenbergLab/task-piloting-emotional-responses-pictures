@@ -26,8 +26,7 @@ function trialTrnaision (){
 }
 
 function getWord (){
-  wordList = wordList.shift();
-  return wordList;
+  return wordList[0];
 }
 
 
@@ -43,16 +42,22 @@ function checkResponse(data){ //check repeated response
 function checkTyping() {
     var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
     var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
-    if (wordList !== lasttrialdata2){      //test if type correctly
+    if (wordList[0] != lasttrialdata2){      //test if type correctly
       falseAnswer += 1;
       alert("Attention! Please type the word correctly. If the alert shows up for 4 times, the experiment will be automatically terminated.");
       wordList.unshift();
       if (falseAnswer == 4){
         alert("Hi! You've made too much errors in typing the word suggesting that you are not paying attention to the task. The task will be Terminated");
         window.close();
-      }else{return true;}
-      return true; }
-    else {falseAnswer = 0;return false}
+      }else{
+        wordList.shift();
+        return true;}
+      wordList.shift();
+      return true;
+    }else {
+      wordList.shift();
+      falseAnswer = 0;
+      return false}
 }
 
 
@@ -71,8 +76,6 @@ function getNextSlide () {  //use to shift instruction slides
   var currentSlide = slideList.shift();
   return currentSlide;
 }
-
-
 
 //data/server communication
 function saveData(filename, filedata, callback, error_callback){
