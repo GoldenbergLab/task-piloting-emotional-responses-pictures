@@ -15,9 +15,17 @@ function getFixationTime (){  //get randomized time of fixation by randomly choo
   return fixationTime;
 }
 
+function getStimuliList (max){
+  var stimuliUnshuffled = [];
+  for(i = 1; i < pictureAmount; i++){
+    stimuliUnshuffled.push('stimuli/' +i+ '.jpg');
+  }
+  return jsPsych.randomization.shuffle(stimuliUnshuffled);
+}
+
 function getStimuli () { //function to get the first stimuli
   var curr_stim = stiumliShuffled[0];
-  var stim = base_path + curr_stim //add the path the stim
+  var stim = curr_stim //add the path the stim
   return stim;
 }
 
@@ -42,7 +50,6 @@ function checkResponse(data){ //check repeated response
   } else {}
   }
 }
-
 function checkTyping() {
   var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
   var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;

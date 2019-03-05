@@ -24,14 +24,8 @@
   var attentionCheckInterval = 5 // intervals
   var pictureAmount = 72
 
-  var stimuliUnshuffled = [];
-  var base_path = 'stimuli/'
+  var stiumliShuffled = getStimuliList (pictureAmount) //get a shuffled list of pictures
 
-  for(i = 1; i < pictureAmount; i++){
-    stimuliUnshuffled.push(i + ".jpg");
-  }
-
-  var stiumliShuffled = jsPsych.randomization.shuffle(stimuliUnshuffled); //shuffle stims for actual task
   var wordList = ['but','rock','sky','our','course','we','table','house','here','mouth','tree'];
   var alertNumber = 0;
 
