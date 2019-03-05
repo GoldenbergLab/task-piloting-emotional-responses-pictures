@@ -14,34 +14,29 @@
     <script src="jquery-3.3.1.min.js"></script>
     <link href="jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"></link>
   </head>
-  <body bgcolor="#AAAAAA"></body>
+  <body bgcolor="#FFF"></body>
   <script>
-
-
-  //things to do
-  // 1. change resolution of pictures
-  // 2/
 
   /* ************************************ */
   /* Define experimental variables / upload data */
   /* ************************************ */
+  var taskNumber = 5; //number of trials. must be a mutiple of 5. The real trial number will have one extra due to attention check trial
+  var attentionCheckInterval = 5 // intervals
+  var pictureAmount = 72
 
   var stimuliUnshuffled = [];
   var base_path = 'stimuli/'
 
-  for(i = 1; i < 73; i++){
+  for(i = 1; i < pictureAmount; i++){
     stimuliUnshuffled.push(i + ".jpg");
   }
 
-
   var stiumliShuffled = jsPsych.randomization.shuffle(stimuliUnshuffled); //shuffle stims for actual task
-  var wordList = ['But','rock','sky','our','Course','we','Table','house','here','Mouth','tree'];
+  var wordList = ['but','rock','sky','our','course','we','table','house','here','mouth','tree'];
+  var alertNumber = 0;
 
-
-
-  var slideList = ['stimuli/ins/Slide 1.png','stimuli/ins/Slide 2.png','stimuli/ins/Slide 3.png','stimuli/ins/Slide 4.png',
-                   'stimuli/ins/Slide 5.png','stimuli/ins/Slide 6.png','stimuli/ins/Slide 7.png','stimuli/ins/Slide 8.png'];//list of instructions slides
-
+  var slideList = ['stimuli/ins/Slide1.JPG','stimuli/ins/Slide2.JPG','stimuli/ins/Slide3.JPG','stimuli/ins/Slide4.JPG',
+  'stimuli/ins/Slide5.JPG','stimuli/ins/Slide6.JPG','stimuli/ins/Slide7.JPG','stimuli/ins/Slide8.JPG'];//list of instructions slides
 
   /******************************************/
   /* Set up Instructions */
@@ -60,7 +55,7 @@
   /******************************************/
   var enter_id = {
       type: 'survey-text',
-      questions: [{prompt: "Please enter your participant id"}],
+      questions: [{prompt: "Please enter your mTurk id (for validation purposes"}],
       on_finish: function(data){
         participantID = JSON.parse(data.responses).Q0; // save id as global variable
         jsPsych.data.addProperties({participant_id: participantID}); // add the participant column to all current and future data entries
@@ -85,7 +80,7 @@
 
   var attentionCheck = {
       timeline: [ask_Typing],
-      loop_function: checkTyping,
+      loop_function: checkTyping
   };
 
 
@@ -98,24 +93,23 @@
 
   var stimuliNoRating = {
     type: 'image-button-response',
-    stimulus: 'stimuli/39.jpg',
+    stimulus: getStimuli,
     choices: [],
-    trial_duration : 1000,
-    prompt: "",
-    data: {Name:'stimuli'},
+    trial_duration : 5000,
+    prompt: ""
   };
 
   var valence = {
     type: 'image-button-response',
     stimulus: getStimuli,
     choices: ["positive", "negative", "neutral"],
-    prompt: "<p>Do you feel positive, negative or neutral emotions in response to the picture</p>"
+    prompt: "<p>Do you feel positive, negative or neutral emotions in response to this picture?</p>"
   };
 
   var stimuliRating = {
     type: 'image-slider-response',
     stimulus: getStimuli,
-    labels: ['1.Not strong at all','10','50','100. Very Strong'],
+    labels: ['1.Not Strong at All','10','50','100. Very Strong'],
     prompt: "<p>How strong is your emotion in response to the picture</p>",
     step:1,
     min:0,
@@ -123,7 +117,6 @@
     start:0,
     on_finish:checkResponse
   };
-
 
   var emotionType = {
     type: 'image-button-response',
@@ -133,19 +126,22 @@
     on_finish:trialTrnaision
   };
 
-
+  var connectSurvey = {
+      type: 'image-button-response',
+      stimulus: getNextSlide,
+      choices: ['Survey']
+  };
 
 
   /* create experiment definition array */
 
   var pilot_stimuli = []; //display instructions
-  //pilot_stimuli.push(participant_id)
-  //for (var i = 0; i < slideList.length-2; i++) {
-  //   pilot_stimuli.push(instructions)}
+  pilot_stimuli.push(participant_id)
+  for (var i = 0; i < slideList.length-1; i++) {
+     pilot_stimuli.push(instructions)}
 
-   var taskNumber = 50; //must be a mutiple of 5. The real trial number will have one extra due to attention check trial
 
-   for (var i = 0; i < taskNumber/5; i++) {
+   for (var i = 0; i < taskNumber/attentionCheckInterval; i++) {
      pilot_stimuli.push(
        attentionCheck,
        fixation,
@@ -153,8 +149,8 @@
        valence,
        stimuliRating,
        emotionType)
-     var k = 0; var x = 9;
-     while (k < x){ //it will show typing attention check every (x+1) trial
+     var k = 0;
+     while (k < (attentionCheckInterval-1)){ //it will show typing attention check every (x+1) trial
      pilot_stimuli.push(
        fixation,
        stimuliNoRating,
@@ -164,7 +160,7 @@
      k ++;}
    };
 
-
+  pilot_stimuli.push(connectSurvey)
 
   /* start the experiment */
   jsPsych.init({
@@ -174,10 +170,10 @@
     var final_submit = function() {
              jsPsych.turk.submitToTurk({"completion_time": (new Date().getTime())});
           };
-      saveData("2019_pilot_positive_emotions/" + participantID+ ".json",
-      jsPsych.data.get().json(), final_submit, final_submit);
-    jsPsych.data.get().localSave('csv',participantID+'.csv'); //save as csv file with id as file name
-    window.location = "https://stanforduniversity.qualtrics.com/jfe/form/SV_cBULlVQd3dVp3q5"
+    saveData("2019_pilot_positive_emotions/" + participantID+ ".json",
+    jsPsych.data.get().json(), final_submit, final_submit);
+    //jsPsych.data.get().localSave('csv',participantID+'.csv'); //save as csv file with id as file name
+    window.location = "https://stanforduniversity.qualtrics.com/jfe/form/SV_0fiIg8VMGhrYDkx"
     }
 
   })

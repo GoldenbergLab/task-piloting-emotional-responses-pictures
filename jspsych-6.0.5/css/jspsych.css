@@ -58,7 +58,7 @@
 /* borrowing Bootstrap style for btn elements, but combining styles a bit */
 .jspsych-btn {
   display: inline-block;
-  width:90px; // remove if you don't want a fix size. 
+  width:90px; // remove if you don't want a fix size.
   padding: 6px 12px;
   margin: 0px;
   font-size: 14px;
@@ -72,8 +72,8 @@
   background-image: none;
   border: 1px solid transparent;
   border-radius: 4px;
-  color: #333;
-  background-color: #fff;
+  color: #000000;
+  background-color: #ccc;
   border-color: #ccc;
 }
 
