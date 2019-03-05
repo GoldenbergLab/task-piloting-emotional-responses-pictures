@@ -20,7 +20,7 @@
   /* ************************************ */
   /* Define experimental variables / upload data */
   /* ************************************ */
-  var taskNumber = 5; //number of trials. must be a mutiple of 5. The real trial number will have one extra due to attention check trial
+  var trialNumber = 5; //number of trials. must be a mutiple of 5. The real trial number will have one extra due to attention check trial
   var attentionCheckInterval = 5 // intervals
   var pictureAmount = 72
 
@@ -141,7 +141,7 @@
      pilot_stimuli.push(instructions)}
 
 
-   for (var i = 0; i < taskNumber/attentionCheckInterval; i++) {
+   for (var i = 0; i < trialNumber/attentionCheckInterval; i++) {
      pilot_stimuli.push(
        attentionCheck,
        fixation,
@@ -164,6 +164,7 @@
 
   /* start the experiment */
   jsPsych.init({
+  preload_images: stiumliShuffled,
   timeline: pilot_stimuli,
     on_finish: function(data){
       //saveData
