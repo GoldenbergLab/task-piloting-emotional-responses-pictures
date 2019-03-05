@@ -14,7 +14,7 @@
     <script src="jquery-3.3.1.min.js"></script>
     <link href="jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"></link>
   </head>
-  <body bgcolor="#AAAAAA"></body>
+  <body bgcolor="#FFF"></body>
   <script>
 
 
@@ -40,8 +40,8 @@
 
 
 
-  var slideList = ['stimuli/ins/Slide 1.png','stimuli/ins/Slide 2.png','stimuli/ins/Slide 3.png','stimuli/ins/Slide 4.png',
-                   'stimuli/ins/Slide 5.png','stimuli/ins/Slide 6.png','stimuli/ins/Slide 7.png','stimuli/ins/Slide 8.png'];//list of instructions slides
+  var slideList = ['stimuli/ins/Slide1.JPG','stimuli/ins/Slide2.JPG','stimuli/ins/Slide3.JPG','stimuli/ins/Slide4.JPG',
+  'stimuli/ins/Slide5.JPG','stimuli/ins/Slide6.JPG','stimuli/ins/Slide7.JPG','stimuli/ins/Slide8.JPG'];//list of instructions slides
 
 
   /******************************************/
@@ -137,18 +137,18 @@
   var connectSurvey = {
       type: 'image-button-response',
       stimulus: getNextSlide,
-      choices: ['Begin Survey']
+      choices: ['Survey']
   };
 
 
   /* create experiment definition array */
 
   var pilot_stimuli = []; //display instructions
-  //pilot_stimuli.push(participant_id)
-  //for (var i = 0; i < slideList.length-2; i++) {
-  //   pilot_stimuli.push(instructions)}
+  pilot_stimuli.push(participant_id)
+  for (var i = 0; i < slideList.length-1; i++) {
+     pilot_stimuli.push(instructions)}
 
-   var taskNumber = 10; //must be a mutiple of 5. The real trial number will have one extra due to attention check trial
+   var taskNumber = 5; //must be a mutiple of 5. The real trial number will have one extra due to attention check trial
 
    for (var i = 0; i < taskNumber/5; i++) {
      pilot_stimuli.push(
