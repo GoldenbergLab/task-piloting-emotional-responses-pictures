@@ -20,6 +20,8 @@
   /* ************************************ */
   /* Define experimental variables / upload data */
   /* ************************************ */
+  var taskNumber = 5; //number of trials. must be a mutiple of 5. The real trial number will have one extra due to attention check trial
+  var attentionCheckInterval = 5 // intervals 
 
   var stimuliUnshuffled = [];
   var base_path = 'stimuli/'
@@ -137,9 +139,8 @@
   for (var i = 0; i < slideList.length-1; i++) {
      pilot_stimuli.push(instructions)}
 
-   var taskNumber = 5; //must be a mutiple of 5. The real trial number will have one extra due to attention check trial
 
-   for (var i = 0; i < taskNumber/5; i++) {
+   for (var i = 0; i < taskNumber/attentionCheckInterval; i++) {
      pilot_stimuli.push(
        attentionCheck,
        fixation,
@@ -147,8 +148,8 @@
        valence,
        stimuliRating,
        emotionType)
-     var k = 0; var x = 4;
-     while (k < x){ //it will show typing attention check every (x+1) trial
+     var k = 0;
+     while (k < (attentionCheckInterval-1)){ //it will show typing attention check every (x+1) trial
      pilot_stimuli.push(
        fixation,
        stimuliNoRating,
