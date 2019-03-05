@@ -21,12 +21,13 @@
   /* Define experimental variables / upload data */
   /* ************************************ */
   var taskNumber = 5; //number of trials. must be a mutiple of 5. The real trial number will have one extra due to attention check trial
-  var attentionCheckInterval = 5 // intervals 
+  var attentionCheckInterval = 5 // intervals
+  var pictureAmount = 72
 
   var stimuliUnshuffled = [];
   var base_path = 'stimuli/'
 
-  for(i = 1; i < 72; i++){
+  for(i = 1; i < pictureAmount; i++){
     stimuliUnshuffled.push(i + ".jpg");
   }
 
