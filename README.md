@@ -4,7 +4,7 @@
 This is a repository designed to pilot emotional responses to a set of pictures.  
 This task is designed baed on jspsych(https://www.jspsych.org/) which is a javascript library for running experiment. You can modify the questions you ask by changing the plugings suggested by jspsych.
 
-### here is you do it.
+## Here is you do it
 
 1. Clone or download all the files to a local folder.
 2. Change the pictures you want to test in the stimuli folder (and change the amount in line 32).
