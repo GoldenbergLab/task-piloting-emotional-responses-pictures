@@ -1,5 +1,5 @@
 
-## piloting emotions in response to pictures
+## Piloting emotional responses to pictures
 
 This is a repository designed to pilot emotional responses to a set of pictures.  
 This task is designed baed on jspsych(https://www.jspsych.org/) which is a javascript library for running experiment. You can modify the questions you ask by changing the plugings suggested by jspsych.
