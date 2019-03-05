@@ -55,7 +55,7 @@
   /******************************************/
   var enter_id = {
       type: 'survey-text',
-      questions: [{prompt: "Please enter your participant id"}],
+      questions: [{prompt: "Please enter your mTurk id (for validation purposes"}],
       on_finish: function(data){
         participantID = JSON.parse(data.responses).Q0; // save id as global variable
         jsPsych.data.addProperties({participant_id: participantID}); // add the participant column to all current and future data entries
@@ -95,7 +95,7 @@
     type: 'image-button-response',
     stimulus: getStimuli,
     choices: [],
-    trial_duration : 1000,
+    trial_duration : 5000,
     prompt: ""
   };
 
