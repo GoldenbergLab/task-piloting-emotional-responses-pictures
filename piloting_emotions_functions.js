@@ -15,7 +15,7 @@ function getFixationTime (){  //get randomized time of fixation by randomly choo
   return fixationTime;
 }
 
-function getStimuliList (max){
+function getStimuliList (max){ //get a list of stimuli
   var stimuliUnshuffled = [];
   for(i = 1; i < pictureAmount; i++){
     stimuliUnshuffled.push('stimuli/' +i+ '.jpg');

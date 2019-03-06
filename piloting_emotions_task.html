@@ -17,18 +17,15 @@
   <body bgcolor="#FFF"></body>
   <script>
 
-  /* ************************************ */
+  /* ******************************************* */
   /* Define experimental variables / upload data */
-  /* ************************************ */
+  /* ******************************************* */
   var trialNumber = 30; //number of trials. must be a mutiple of 5. The real trial number will have one extra due to attention check trial
-  var attentionCheckInterval = 5 // intervals
+  var attentionCheckInterval = 5 // intervals for attention check
   var pictureAmount = 72
-
   var stiumliShuffled = getStimuliList (pictureAmount) //get a shuffled list of pictures
-
   var wordList = ['but','rock','sky','our','course','we','table','house','here','mouth','tree'];
   var alertNumber = 0;
-
   var slideList = ['stimuli/ins/Slide1.JPG','stimuli/ins/Slide2.JPG','stimuli/ins/Slide3.JPG','stimuli/ins/Slide4.JPG',
   'stimuli/ins/Slide5.JPG','stimuli/ins/Slide6.JPG','stimuli/ins/Slide7.JPG','stimuli/ins/Slide8.JPG'];//list of instructions slides
 
@@ -48,24 +45,24 @@
   /* Start Experiment - trial by trial */
   /******************************************/
   var enter_id = {
-      type: 'survey-text',
-      questions: [{prompt: "Please enter your mTurk id (for validation purposes"}],
-      on_finish: function(data){
-        participantID = JSON.parse(data.responses).Q0; // save id as global variable
-        jsPsych.data.addProperties({participant_id: participantID}); // add the participant column to all current and future data entries
-      }};
+    type: 'survey-text',
+    questions: [{prompt: "Please enter your mTurk id (for validation purposes"}],
+    on_finish: function(data){
+      participantID = JSON.parse(data.responses).Q0; // save id as global variable
+      jsPsych.data.addProperties({participant_id: participantID}); // add the participant column to all current and future data entries
+  }};
 
   var participant_id = {
-      timeline: [enter_id],
-      loop_function: function(data){
-      var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
-      var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
-      var patt = new RegExp("^[a-zA-Z_0-9]{1,}$"); //the first and last character
-      if (!patt.test(lasttrialdata2)){      //test if first/last character in response exist
-         alert("Please, enter your participant id");
-          return true; }
-          else{ return false;} },
-      };
+    timeline: [enter_id],
+    loop_function: function(data){
+    var lasttrialdata = jsPsych.data.getLastTrialData().select('responses').values[0];
+    var lasttrialdata2 = JSON.parse(lasttrialdata).Q0;
+    var patt = new RegExp("^[a-zA-Z_0-9]{1,}$"); //the first and last character
+    if (!patt.test(lasttrialdata2)){      //test if first/last character in response exist
+      alert("Please, enter your participant id");
+      return true; }
+      else{ return false;} },
+  };
 
   var ask_Typing = {
     type: 'survey-text',
@@ -76,7 +73,6 @@
       timeline: [ask_Typing],
       loop_function: checkTyping
   };
-
 
   var fixation = {
       type: 'html-keyboard-response',
@@ -131,37 +127,37 @@
   };
 
 
-  /* create experiment definition array */
-
+  /******************************************/
+  /*           timeline                     */
+  /******************************************/
   var pilot_stimuli = []; //display instructions
   pilot_stimuli.push(participant_id)
   for (var i = 0; i < slideList.length-1; i++) {
-     pilot_stimuli.push(instructions)}
-
-
-   for (var i = 0; i < trialNumber/attentionCheckInterval; i++) {
-     pilot_stimuli.push(
-       attentionCheck,
-       fixation,
-       stimuliNoRating,
-       valence,
-       stimuliRating,
-       emotionType)
-     var k = 0;
-     while (k < (attentionCheckInterval-1)){ //it will show typing attention check every (x+1) trial
-     pilot_stimuli.push(
-       fixation,
-       stimuliNoRating,
-       valence,
-       stimuliRating,
-       emotionType);
+    pilot_stimuli.push(instructions)}
+    for (var i = 0; i < trialNumber/attentionCheckInterval; i++) {
+      pilot_stimuli.push(
+         attentionCheck,
+         fixation,
+         stimuliNoRating,
+         valence,
+         stimuliRating,
+         emotionType)
+    var k = 0;
+    while (k < (attentionCheckInterval-1)){ //it will show typing attention check every (x+1) trial
+      pilot_stimuli.push(
+        fixation,
+        stimuliNoRating,
+        valence,
+        stimuliRating,
+        emotionType);
      k ++;}
    };
 
   pilot_stimuli.push(connectSurvey)
 
-  /* start the experiment */
-  jsPsych.init({
+  /******************************************/
+  /*           timeline                     */
+  /******************************************/  jsPsych.init({
   preload_images: stiumliShuffled,
   timeline: pilot_stimuli,
     on_finish: function(data){
@@ -178,4 +174,4 @@
   })
 
   </script>
-  </html>
+</html>
