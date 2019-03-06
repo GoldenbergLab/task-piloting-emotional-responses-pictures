@@ -1,0 +1,431 @@
+---
+title: "categorization online pilot"
+output: html_notebook
+---
+#five partiicpants (they are in the pilot) - were directed into another qualtrics survey( probably the amplification stuff. )
+
+#upload all csv files
+```{r preparing the dataset, include=FALSE,echo=FALSE}
+rm(list = ls())
+
+library(Rmisc);library(tidyverse); library(lme4); library(lmerTest); 
+library(jsonlite)
+
+d <-
+    list.files(pattern="*.json") %>% #get a list of all  files
+    map_df(~fromJSON(file.path(.),
+              simplifyVector = TRUE, 
+              flatten = T)) #add these files to d
+
+d=as.data.frame(d)
+d=subset(d, singleStim != "NA")
+
+
+d= d %>%
+  filter(singleStim!="NA") %>% #remove all non-relevant files
+  select(rt,
+         groupChoice=button_pressed,
+         trialOld=trial_index,
+         time_elapsed,
+         id=participant_id,
+         fixationTime,
+         faceIdentity,
+         photo=singleStim,
+         rating,
+         ratingTime,
+         sampleSD,
+         sampleMean,
+         starts_with("pos"),
+         meanAgents,
+         photoDescription =description)%>%
+  group_by(id)%>%
+  mutate(trial=seq(from =-3, to =50))%>%
+  filter(trial>0)%>%
+  ungroup()%>%
+  separate(photo,into = c("file","photo"),sep = -7)%>%
+  separate(photo,into = c("photo", "fileEnding"), sep = "\\.")%>%
+  select(-file,-fileEnding)
+
+d$photo = as.integer(d$photo)
+d$rating=as.integer(d$rating)
+d$groupChoice=as.integer(d$groupChoice)
+
+#define varialble
+d$condition = ifelse(d$rating==d$sampleMean,"same",
+                     ifelse(d$rating>d$sampleMean,"low",
+                            "high"))
+d$groupChoice=ifelse(d$groupChoice==0,1,0)
+d$condition=factor(d$condition)
+d$condition1 = d$condition#create a copy of condition
+contrasts(d$condition1) = cbind (same = c(2,-1,-1) , dif = c(0, 1,-1))
+d$condition_bi = ifelse(d$condition == "same", 1,2)
+d$condition_bi = factor (d$condition_bi, label =c("Same Mean", "Different Mean"))
+#d=subset(d,citizen ==1)
+d$condition_biEffect= ifelse(d$condition_bi=="Same Mean",-1,1)
+
+
+#combind moderator file
+#m = read_csv('belonging_moderators.csv') # we are reading the moderators file (which was collected via qualtrics)
+#m = m[,c(19:93)] #cleaning
+#d = left_join(d,m, by="id") #combining the two datasets based on participants' id
+
+
+#create scales and define vairables in the new extended file
+#d$identscale = (rowMeans(d[,c('iden1', 'iden2', 'iden3', 'iden4','iden5' )], na.rm=T)) #create a group identicia
+#d$identscale=d$identscale-13
+#d$sex = if_else(d$sex==2, "male", "female") # transform group choise into 0 or 1
+
+dfc <- summarySE(d, measurevar="groupChoice", groupvars=c("condition_bi", "sampleSD"), na.rm = T)
+dfc$sampleSD=factor(dfc$sampleSD)
+
+pd <- position_dodge(.1)
+
+
+g=ggplot(dfc,aes(x=condition_bi, y=groupChoice ,fill = sampleSD ))+
+  geom_bar(position=position_dodge(), width = 0.5,stat="identity", colour="black" )+
+  geom_errorbar(aes(ymin=groupChoice-ci, ymax=groupChoice+ci), width=.1,position=position_dodge(.5))+
+  theme_bw()+
+  theme(plot.title = element_text(size = rel(1.4), hjust = 0.5,),
+        axis.title.y = element_text(face="bold",  size=14),
+        axis.text.x  = element_text( vjust=0.5, size=18),
+        axis.text.y  = element_text( vjust=0.5, size=12),
+        axis.title.x = element_blank()) +
+    scale_fill_grey()+
+   coord_cartesian(ylim=c(0, 1)) +
+  geom_hline(yintercept = 0.5,linetype="dashed", color = "red")+
+    labs(title = "Probability of Self-Categorization based on Group Mean and SD", x = "",y = "P(self-categorization)");g
+
+
+```
+
+#get texts to filter participants
+
+```{r}
+
+
+texts = d %>%
+  select(id,photo, photoDescription,trial)%>%
+  filter(trial %in% c(1,6,11,16,21,26,31,36,41,46))
+
+```
+
+
+#descriptives
+```{r}
+
+addmargins(table(d$condition)) # how many people we have in each condition 
+length(unique(d$id)) # get the amount of unique ids 
+
+des= d %>%
+  group_by(id)%>%
+  slice(1)
+
+race =des %>%
+  select(white, black, asian,latin,other)%>%
+  gather (race, value, -id) %>%
+  group_by(race) %>%
+  count (value==1)
+
+mean(des$age)
+sd (des$age)
+
+table(des$sex)
+
+
+
+```
+
+
+#main analysis
+
+###question 1 - difference in choice
+
+Do we have a difference in choice based on condition? we compraed the same to the low and the high conditions. I think we should also consider to do orthogonal comparison here comparing the same to both and then low to high
+```{r similar vs. different}
+#groupChoice; 0 - not my group , 1 - my group
+r = glmer(groupChoice~condition_bi +(1|id), family = binomial, d);summary(r)
+
+
+#confidence interval
+confint(r,level = .95)
+
+#effect size (using the package r2glmm)
+
+library (MuMIn)
+r.squaredGLMM(r)
+
+
+
+#grpah 
+dfc <- summarySE(dd, measurevar="groupChoice", groupvars=c("condition_bi"), na.rm = T)
+pd <- position_dodge(.1)
+g=ggplot(dfc,aes(x=condition_bi, y=groupChoice , fill = "Black" ))+
+  geom_bar(position=position_dodge(), width = 0.5,stat="identity", colour="black" )+
+  geom_errorbar(aes(ymin=groupChoice-ci, ymax=groupChoice+ci), width=.1,position=position_dodge(.9))+
+  theme_bw()+
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5),
+        legend.position = "none",
+        axis.title.y = element_text(face="bold",  size=14),
+        axis.text.x  = element_text( vjust=0.5, size=18),
+        axis.text.y  = element_text( vjust=0.5, size=12),
+        axis.title.x = element_blank()) +
+    scale_fill_grey()+
+   coord_cartesian(ylim=c(0, 1)) +
+  geom_hline(yintercept = 0.5,linetype="dashed", color = "red")+
+    labs(title = "Probability of Self-Categorization based on Group Mean", x = "",y = "P(self-categorization)");g
+
+```
+
+
+```{r sd manipulation}
+r = glmer(groupChoice~sampleSD*condition_bi +(1|id),family= binomial, d);summary(r)
+
+
+#confidence interval
+#confint(r,level = .95)
+
+r.squaredGLMM(r)
+
+
+
+dfc <- summarySE(d, measurevar="groupChoice", groupvars=c("condition_bi", "sampleSD", "id"), na.rm = T)
+dfc$sampleSD=factor(dfc$sampleSD)
+
+pd <- position_dodge(.1)
+g=ggplot(dfc,aes(x=condition_bi, y=groupChoice ,fill = sampleSD ))+
+  geom_bar(position=position_dodge(), width = 0.5,stat="identity", colour="black" )+
+  geom_errorbar(aes(ymin=groupChoice-ci, ymax=groupChoice+ci), width=.1,position=position_dodge(.5))+
+  theme_bw()+
+  theme(plot.title = element_text(size = rel(1.4), hjust = 0.5,),
+        axis.title.y = element_text(face="bold",  size=14),
+        axis.text.x  = element_text( vjust=0.5, size=18),
+        axis.text.y  = element_text( vjust=0.5, size=12),
+        axis.title.x = element_blank()) +
+    scale_fill_grey()+
+  facet_wrap(~id)+
+   coord_cartesian(ylim=c(0, 1)) +
+  geom_hline(yintercept = 0.5,linetype="dashed", color = "red")+
+    labs(title = "Probability of Self-Categorization based on Group Mean and SD", x = "",y = "P(self-categorization)");g
+
+ggsave(g,  device = "pdf")
+
+ggsave("mtcars.pdf")
+```
+
+
+##suplemenraty materials 
+
+```{r similar vs. differennt -higher vers lower}
+
+
+r = glmer(groupChoice~condition1+(1|id), family = binomial, d);summary(r)
+
+confint(r,level =.95)
+
+dfc <- summarySE(d, measurevar="groupChoice", groupvars=c("condition"), na.rm = T)
+dfc$condition = c("Similar", "Lower","Higher")
+
+pd <- position_dodge(.1)
+g=ggplot(dfc,aes(x=condition, y=groupChoice , fill = "Black" ))+
+  geom_bar(position=position_dodge(), width = 0.5,stat="identity", colour="black" )+
+  geom_errorbar(aes(ymin=groupChoice-ci, ymax=groupChoice+ci), width=.1,position=position_dodge(.9))+
+  theme_bw()+
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5),
+        legend.position = "none",
+        axis.title.y = element_text(face="bold",  size=14),
+        axis.text.x  = element_text( vjust=0.5, size=18),
+        axis.text.y  = element_text( vjust=0.5, size=12),
+        axis.title.x = element_blank()) +
+    scale_fill_grey()+
+   coord_cartesian(ylim=c(0, 1)) +
+  geom_hline(yintercept = 0.5,linetype="dashed", color = "red")+
+    labs(title = "Probability of Self-Categorization based on Group Mean", x = "",y = "P(self-categorization)");g
+
+
+
+```
+
+
+
+
+####question 2 - difference in choice based on participant's initial rating? 
+```{r}
+r = glmer(groupChoice~rating +(1|id), family=binomial, d);summary(r)
+
+
+r = lm(identscale~rating , d);summary(r)
+
+```
+
+
+####question 3- potential moderators.
+
+
+```{r gender}
+
+confint(r, level = .95)
+
+
+r = glmer(groupChoice~sex+(1|id),family=binomial, d);summary(r) #identity scale does not predict rate
+
+confint(r, level = .95)
+
+
+```
+
+```{r race}
+
+d$race = ifelse(d$white==1, 1, 0)
+
+
+r = glmer(groupChoice~race(1|id),family = binomial, d);summary(r) #identity scale does not predict rate
+confint(r, level = .95)
+
+```
+
+
+
+```{r political affiliation1}
+
+r = glmer(groupChoice~scale(poli) +(1|id),family=binomial, d);summary(r) #identity scale does not predict rate
+
+confint(r,level = .95)
+```
+
+
+```{r idencitfication}
+
+iden = d%>%
+  group_by(id)%>%
+  slice(1)%>%
+  ungroup()%>%
+  select(starts_with("iden"), -identscale)
+
+psych::alpha(iden)
+
+d$identscale = (rowMeans(d[,c('iden1', 'iden2', 'iden3', 'iden4','iden5' )], na.rm=T)) #create a group identicia
+
+
+
+r = glmer(groupChoice~scale(identscale) +(1|id),family=binomial, d);summary(r) #identity scale does not predict rate
+
+confint (r, level=.95)
+```
+
+
+```{r political affiliation}
+
+r = glmer(groupChoice~scale(poli) +(1|id),family=binomial, d);summary(r) #identity scale does not predict rate
+
+confint(r,level = .95)
+```
+
+
+
+####question 5 - accuracy in the same condition as precitrr of the other conditions**
+
+```{r}
+
+g = d%>%
+  subset (condition != "same") %>%
+    ggplot(.,aes(x=sameAccuracy, y=groupChoice)) +
+    geom_point() +
+    facet_wrap(~condition)+
+    stat_smooth(method="glm", method.args=list(family="binomial"))
+g
+```
+
+
+
+
+
+####power analysis of initial sample  
+```{r}
+
+library (simr)
+
+p=subset(d, id<13)
+
+p$condition_bi=as.integer(p$condition_bi)
+
+
+r = glmer(groupChoice~condition_bi +(1|id), family = binomial,p);summary(r)
+
+power =powerSim(r,fixed("condition_bi"),nsim=100)
+
+model1 = extend(r,along="id", n=30)
+
+pc = powerCurve(model1, along = "id",nsim =100)
+ pl
+
+port
+fixef(r)
+
+
+```
+###distributions of the group 
+
+```{r}
+dis = read_csv("face_distribution_calculation10sd.csv")
+
+
+dis%>%
+  gather%>%
+  ggplot(data=., aes(value))+ 
+    geom_histogram()+
+    facet_wrap(~key)
+
+
+```
+
+
+
+#### model - generate files
+
+We first need to transform each participants into a list of lists. 
+
+```{r generate json files -only use once}
+
+library(jsonlite)
+
+
+files = d%>%
+  select (id, starts_with("par"), -partUSText, -partUS ,trial,rating) %>%
+  group_by(id)%>%
+  gather (par, agentRating,-trial,-id)  %>%
+  spread(trial, agentRating)%>%
+  select( -par)
+
+list_id = unique(files$id)
+  
+for (i in list_id){
+  print (i)
+  df = subset (files,id ==i)
+  df$id = NULL
+  df = as.list(df)
+  df =toJSON(df, pretty = TRUE)
+  write(df, sprintf('C:/Users/chaga/Google Drive/research/categorization_belonging/categorization_manipulating_mean/model/json_files/id_%d.json', i))
+}
+
+
+```
+
+
+
+#check R^2
+
+```{r}
+
+d$test = ifelse(d$condition_bi=="Same Mean", 1,0)
+
+d$test[1:4] = c(1,1,0,0)
+
+
+r= glmer (test ~ condition + (1|id), family = binomial,d); summary(r)
+
+
+
+r2beta(model = r, method = 'sgv', data = d)
+
+```
+

@@ -90,14 +90,16 @@
     stimulus: getStimuli,
     choices: [],
     trial_duration : 5000,
-    prompt: ""
+    prompt: "",
+    data: {name:"noRating"}
   };
 
   var valence = {
     type: 'image-button-response',
     stimulus: getStimuli,
     choices: ["positive", "negative", "neutral"],
-    prompt: "<p>Do you feel positive, negative or neutral emotions in response to this picture?</p>"
+    prompt: "<p>Do you feel positive, negative or neutral emotions in response to this picture?</p>",
+    data: {name:"valence"}
   };
 
   var stimuliRating = {
@@ -109,7 +111,8 @@
     min:0,
     max:100,
     start:0,
-    on_finish:checkResponse
+    on_finish:checkRespons,
+    data: {name:"rating"}
   };
 
   var emotionType = {
@@ -117,7 +120,8 @@
     stimulus: getStimuli,
     choices: ["Happiness", "Excitment", "Calmness", "Sadness","Anger","Guilt", "Fear","Hatred"],
     prompt: "<p>What type of emotion this picture makes you feel?</p>",
-    on_finish:trialTrnaision
+    on_finish:trialTrnaision,
+    data: {name:"emotionType"}
   };
 
   var connectSurvey = {
